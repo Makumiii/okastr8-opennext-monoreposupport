@@ -1,29 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
-import initSqlJs from "sql.js";
+import { DatabaseSync } from "node:sqlite";
 
 const dbPath = process.env.SQLITE_PATH || "/tmp/take-notes.db";
-let sqlitePromise;
 let db;
-
-async function getSqlite() {
-  if (!sqlitePromise) {
-    sqlitePromise = initSqlJs({
-      locateFile: (file) => path.join(process.cwd(), "node_modules/sql.js/dist", file)
-    });
-  }
-  return sqlitePromise;
-}
 
 export async function getDb() {
   if (db) return db;
-  const SQL = await getSqlite();
-  if (fs.existsSync(dbPath)) {
-    db = new SQL.Database(fs.readFileSync(dbPath));
-  } else {
-    db = new SQL.Database();
-  }
-  db.run(`
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  db = new DatabaseSync(dbPath);
+  db.exec(`
     CREATE TABLE IF NOT EXISTS notes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
@@ -31,28 +17,19 @@ export async function getDb() {
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
   `);
-  persist();
   return db;
 }
 
 export function persist() {
-  if (!db) return;
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-  fs.writeFileSync(dbPath, Buffer.from(db.export()));
+  // Native SQLite persists writes directly to dbPath.
 }
 
 export async function all(sql, params = []) {
   const database = await getDb();
-  const stmt = database.prepare(sql);
-  stmt.bind(params);
-  const rows = [];
-  while (stmt.step()) rows.push(stmt.getAsObject());
-  stmt.free();
-  return rows;
+  return database.prepare(sql).all(...params);
 }
 
 export async function run(sql, params = []) {
   const database = await getDb();
-  database.run(sql, params);
-  persist();
+  database.prepare(sql).run(...params);
 }
