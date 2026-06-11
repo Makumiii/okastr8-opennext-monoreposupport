@@ -1,0 +1,12 @@
+{
+  "name": "okastr8-opennext-monoreposupport",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "dev:tasks": "npm run dev --workspace task-tracker",
+    "dev:notes": "npm run dev --workspace take-notes"
+  }
+}

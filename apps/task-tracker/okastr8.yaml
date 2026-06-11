@@ -1,0 +1,8 @@
+app:
+  root: "apps/task-tracker"
+framework: "next"
+adapter: "opennext"
+package_manager: "npm"
+runtime: "node:22"
+port: 3101
+domain: "tasktracker.makumitech.dev"
