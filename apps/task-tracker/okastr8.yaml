@@ -1,5 +1,7 @@
 app:
   root: "apps/task-tracker"
+  compose_file: "docker-compose.yml"
+  service: "task-tracker"
 framework: "next"
 adapter: "opennext"
 package_manager: "npm"

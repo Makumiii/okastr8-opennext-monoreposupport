@@ -1,0 +1,12 @@
+.git
+node_modules
+apps/*/node_modules
+.next
+.open-next
+apps/*/.next
+apps/*/.open-next
+npm-debug.log*
+.env.local
+.env.*.local
+Dockerfile.generated
+docker-compose.override.yml

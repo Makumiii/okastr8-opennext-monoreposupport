@@ -1,5 +1,7 @@
 app:
   root: "apps/take-notes"
+  compose_file: "docker-compose.yml"
+  service: "take-notes"
 framework: "next"
 adapter: "opennext"
 package_manager: "npm"
